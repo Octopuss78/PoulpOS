@@ -1,16 +1,14 @@
+#include "io.h"
 //Constants
 
 enum {
     PERIPHERAL_BASE_ADDR = 0x3F000000,
     GPFSEL0         = PERIPHERAL_BASE_ADDR + 0x200000,
-    GPSET0          = PERIPHERAL_BASE_ADDR + 0x20001C,
-    GPCLR0          = PERIPHERAL_BASE_ADDR + 0x200028,
     GPPUD           = PERIPHERAL_BASE_ADDR + 0x200094,
     GPPUDCLK0       = PERIPHERAL_BASE_ADDR + 0x200098
 };
 
 enum {
-    GPIO_MAX_PIN       = 53,
     GPIO_FUNCTION_ALT5 = 2
 };
 
@@ -42,24 +40,24 @@ enum {
 
 //FUNCTIONS
 
-void mmio_write(unsigned long addr, unsigned int val)
+static void mmio_write(unsigned long addr, unsigned int val)
 {
   *(volatile unsigned int *)addr = val;
 }
 
-unsigned int mmio_read(unsigned long addr)
+static unsigned int mmio_read(unsigned long addr)
 {
   return *(volatile unsigned int *) addr;
 }
 
-void delay_us(unsigned int us)
+static void delay_us(unsigned int us)
 {
     unsigned int start = mmio_read(SYSTMR_CLO);
     while (mmio_read(SYSTMR_CLO) - start < us);
 }
 
 
-void gpio_set_alt5(unsigned int pin)
+static void gpio_set_alt5(unsigned int pin)
 {
   unsigned int reg = GPFSEL0 + (pin/10)*4;
   unsigned int shift = (pin % 10) *3;
@@ -69,7 +67,7 @@ void gpio_set_alt5(unsigned int pin)
   mmio_write(reg,val);
 }
 
-void disable_pull(void)
+static void disable_pull(void)
 {
   // Write No Pull to GPPUD
   mmio_write(GPPUD,PULL_NONE);
@@ -81,7 +79,7 @@ void disable_pull(void)
   delay_us(2);
 
   //Clean both registers
-  mmio_write(GPPUD, 0);
+  mmio_write(GPPUD, PULL_NONE);
   mmio_write(GPPUDCLK0, 0);
 }
 
