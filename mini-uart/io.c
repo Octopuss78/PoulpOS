@@ -82,7 +82,7 @@ static void disable_pull(void)
   mmio_write(GPPUDCLK0, 0);
 }
 
-void uart_init(void)
+static void uart_init(void)
 {
   //Select GPIO ALT5 Function 
   gpio_set_alt5(14);
@@ -116,7 +116,7 @@ void uart_init(void)
 }
 
 
-void uart_putc(char c)
+static void uart_putc(char c)
 {
   //Waiting for FIFO to accept at least 1 byte
   while (!(mmio_read(AUX_MU_LSR_REG) & (1 << 5)));
@@ -125,7 +125,7 @@ void uart_putc(char c)
   mmio_write(AUX_MU_IO_REG, c);
 }
 
-void uart_puts(const char *s)
+static void uart_puts(const char *s)
 {
   int i = 0;
   while(s[i])
