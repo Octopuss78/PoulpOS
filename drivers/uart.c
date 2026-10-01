@@ -1,4 +1,4 @@
-#include "io.h"
+#include "uart.h"
 //Constants
 
 enum {
@@ -74,8 +74,7 @@ static void disable_pull(void)
   delay_us(2);
 
   //Set pin 14 and 15 in GPPUDCLK0
-  unsigned int tmp = (1 << 14) | (1 << 15);
-  mmio_write(GPPUDCLK0, tmp);
+  mmio_write(GPPUDCLK0, (1 << 14) | (1 << 15));
   delay_us(2);
 
   //Clean both registers
@@ -108,7 +107,7 @@ void uart_init(void)
   mmio_write(AUX_MU_MCR_REG, 0);
   mmio_write(AUX_MU_IER_REG, 0);
 
-  //Clearing receive and transmit FIFO
+  //Clearing receive and transmit FIFOs
   mmio_write(AUX_MU_IIR_REG, 2 | 4);
 
   //Enable TX and RX
@@ -137,3 +136,4 @@ void uart_puts(const char *s)
     i++;
   }
 }
+
