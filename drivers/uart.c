@@ -1,8 +1,8 @@
 #include "uart.h"
+#include "mmio.h"
 //Constants
 
 enum {
-    PERIPHERAL_BASE_ADDR = 0x3F000000,
     GPFSEL0         = PERIPHERAL_BASE_ADDR + 0x200000,
     GPPUD           = PERIPHERAL_BASE_ADDR + 0x200094,
     GPPUDCLK0       = PERIPHERAL_BASE_ADDR + 0x200098
@@ -39,16 +39,6 @@ enum {
 };
 
 //FUNCTIONS
-
-static void mmio_write(unsigned long addr, unsigned int val)
-{
-  *(volatile unsigned int *)addr = val;
-}
-
-static unsigned int mmio_read(unsigned long addr)
-{
-  return *(volatile unsigned int *) addr;
-}
 
 static void delay_us(unsigned int us)
 {
