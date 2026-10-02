@@ -1,8 +1,14 @@
 #include "uart.h"
+#include "test.h"
 
-void main(void)
+void kernel_main(void)
 {
   uart_init();
   uart_puts("Hello world\n");
-  while(1);
+
+  run_tests();
+  while(1)
+  {
+    uart_putc(uart_getc());
+  }
 }

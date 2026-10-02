@@ -1,5 +1,6 @@
 #include "uart.h"
 #include "mmio.h"
+#include "../lib/string.h"
 //Constants
 
 enum {
@@ -127,3 +128,24 @@ void uart_puts(const char *s)
   }
 }
 
+char uart_getc(void)
+{
+  //Waiting for FIFO to recive at least 1 byte
+  while (!(mmio_read(AUX_MU_LSR_REG) & 1));
+
+  return (char) mmio_read(AUX_MU_IO_REG);
+}
+
+void uart_puthex(unsigned long v)
+{
+  const char digits[] = "0123456789abcdef";
+
+  uart_putc('0');
+  uart_putc('x');
+  
+  for(int k = 15; k >= 0; k--)
+  {
+    int c = v >> (k*4) & 0xF;
+    uart_putc(digits[c]);
+  }
+}

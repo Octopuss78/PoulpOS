@@ -28,7 +28,7 @@ _start:
 
   //Jump to main() in our C code
 4:
-  bl main
+  bl kernel_main
   b 1b
   
   
