@@ -8,7 +8,7 @@ SRCDIRS = boot arch drivers lib kernel
 INCDIRS = $(addprefix -I,$(SRCDIRS))
 
 CFLAGS  = -Wall -Wextra -ffreestanding -nostdinc -nostdlib -nostartfiles \
-          -mgeneral-regs-only -MMD -MP $(INCDIRS)
+          -mgeneral-regs-only -MMD -MP $(INCDIRS) -Wno-unused-parameter
 ASFLAGS = -MMD -MP $(INCDIRS)
 
 CSRC = $(foreach d,$(SRCDIRS),$(wildcard $(d)/*.c))
