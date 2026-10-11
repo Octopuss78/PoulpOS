@@ -6,5 +6,6 @@ void uart_putc(char c);
 void uart_puts(const char *s);
 char uart_getc(void);
 void uart_puthex(unsigned long v);
+void uart_puthex32(unsigned int v);
 
 #endif

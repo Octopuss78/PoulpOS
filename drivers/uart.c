@@ -149,3 +149,14 @@ void uart_puthex(unsigned long v)
     uart_putc(digits[c]);
   }
 }
+
+void uart_puthex32(unsigned int v)
+{
+ const char digits[] = "0123456789abcdef";
+
+  for(int k = 7; k >= 0; k--)
+  {
+    int c = v >> (k*4) & 0xF;
+    uart_putc(digits[c]);
+  }
+}
