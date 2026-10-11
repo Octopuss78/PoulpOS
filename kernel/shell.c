@@ -99,7 +99,7 @@ void shell_run(void)
 
     for(int i = 0; i < cmd_count; i++)
     { 
-      if(!strncmp(argv[0], cmds[i].name,strlen(cmds[i].name+1)))
+      if(!strncmp(argv[0], cmds[i].name,strlen(cmds[i].name)+1))
       {
         cmds[i].fn(argc,argv);
         break;

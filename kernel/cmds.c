@@ -56,7 +56,7 @@ static void cmd_md(int argc, char **argv)
 {
   if(argc < 2 || argc > 3)
   {
-    uart_puts("usage: md <addr> [count]\n");
+    uart_puts("usage: md <addr> [N]\n");
     return;
   }
 
@@ -109,13 +109,74 @@ static void cmd_md(int argc, char **argv)
   }
 }
 
+static void cmd_mw(int argc, char **argv)
+{
+if(argc < 3 || argc > 4)
+  {
+    uart_puts("usage: mw <addr> <val> [N]\n");
+    return;
+  }
+
+  unsigned long addr;
+  if(!parse_arg(argv[1], &addr))
+  {
+    uart_puts("\n");
+    return;
+  }
+  if((addr%4) != 0)
+  {
+    uart_puts("address must be 4-byte aligned\n");
+    return;
+  }
+
+  unsigned long val;
+  if(!parse_arg(argv[2],&val))
+  {
+    return;
+  }
+  
+  if(val > 0xFFFFFFFF)
+    {
+      uart_puts("value must fit in 32 bits\n");
+      return;
+    }
+
+  unsigned long count = 1;
+  if(argc == 4)
+  {
+    if(!parse_arg(argv[3], &count))
+      return;
+  }
+
+  if(count > MAX_WORDS || count == 0)
+  {
+    uart_puts("Please use a number between 1 and ");
+    uart_puthex(MAX_WORDS);
+    uart_puts("\n");
+    return;
+  }
+
+  //Avoid int overflows
+  if(addr > 0XFFFFFFFFFFFFFFFF - count * 4)
+  {
+    uart_puts("overflow detected, nice try though\n");
+    return;
+  }
+  
+  for(unsigned long i = 0; i < count; i++)
+  {
+    mmio_write(addr+i*4, (unsigned int)val);
+  }
+
+}
 
 const struct Cmd cmds[] = 
   {
     {"echo", &cmd_echo, "basic echo"},
     {"help", &cmd_help, "display this help message"},
     {"el", &cmd_el, "get current exception level"},
-    {"md", &cmd_md, "md <addr> [count] : display words from a given address"}
+    {"md", &cmd_md, "md <addr> [N] : read N words at an address"},
+    {"mw", &cmd_mw, "mw <addr> <val> [N]: write N 32-bit words to an address"}
   };
   
 const int cmd_count = sizeof(cmds) / sizeof(cmds[0]);
