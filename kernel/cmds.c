@@ -1,5 +1,6 @@
 #include "cmds.h"
 #include "uart.h"
+#include "../arch/utils.h"
 
 static void cmd_echo(int argc, char **argv)
 {
@@ -24,11 +25,19 @@ static void cmd_help(int argc, char **argv)
   }
 }
 
+static void cmd_el(int argc, char **argv)
+{
+  uart_puts("Current Exception Level: ");
+  //Convert nbr to char
+  uart_putc(get_el()+'0');
+  uart_puts("\n");
+}
+
 const struct Cmd cmds[] = 
   {
     {"echo", &cmd_echo, "basic echo"},
-    {"help", &cmd_help, "display this help message"}
+    {"help", &cmd_help, "display this help message"},
+    {"el", &cmd_el, "get current exception level "}
   };
   
 const int cmd_count = sizeof(cmds) / sizeof(cmds[0]);
-
